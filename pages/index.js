@@ -2,8 +2,10 @@ import Head from "next/head";
 import Layout, { siteTitle } from "../components/layout";
 import { getSortedPostsData } from "../lib/posts";
 import utilStyles from "../styles/utils.module.css";
+import Link from "next/link";
+import Date from "../components/date";
 
-// fetch data
+// fetch data at build time ssg
 export async function getStaticProps() {
   const allPostsData = getSortedPostsData();
 
@@ -13,6 +15,16 @@ export async function getStaticProps() {
     },
   };
 }
+
+// fetch data at request time ssr
+// export async function getServerSideProps(context) {
+//   // context: contain all request infos
+//   return {
+//     props: {
+//       // props for your component
+//     },
+//   };
+// }
 
 export default function Home({ allPostsData }) {
   return (
@@ -34,11 +46,13 @@ export default function Home({ allPostsData }) {
         <ul className={utilStyles.list}>
           {allPostsData.map(({ id, date, title }) => (
             <li className={utilStyles.listItem} key={id}>
-              {title}
+              <Link href={`/posts/${id}`}>
+                <a>{title}</a>
+              </Link>
               <br />
-              {id}
-              <br />
-              {date}
+              <small className={utilStyles.lightText}>
+                <Date dateString={date} />
+              </small>
             </li>
           ))}
         </ul>
